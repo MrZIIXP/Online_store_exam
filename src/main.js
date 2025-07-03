@@ -42,39 +42,68 @@ export class bag {
 				let tbody = document.querySelector('#Tbody')
 				tbody.innerHTML = ''
 				let currentData = JSON.parse(localStorage.getItem('Bag')) || []
-				let cnt = []
-				currentData.forEach(item => {
-					if (!cnt.includes(item.id)) {
-						let col = '<div class="size-[60px] flex items-center flex-wrap">'
-						let sums = 0
-						currentData.forEach(el => {
-							if (item.id == el.id) {
-								col += `<div class="size-[20px] mx-[5px] shrink-0" style="background-color:${el.color};"></div>`
-								sums += el.sum
-							}
-						})
-						let row = document.createElement('tr')
-						row.className = 'border-b border-gray-200'
-
-						row.innerHTML = `
-            <td class="py-[10px] pr-[10px]"><img src="${
-							item.img
-						}" class="w-[60px] h-[40px] rounded"/></td>
-            <td class="py-[10px] pr-[10px]">${item.name}</td>
-            <td class="py-[10px]">${item.count}</td>
-            <td class="py-[10px] pr-[10px]">${sums}</td>
-            <td class="py-[10px] pr-[10px]">${col + '</div>'}</td>
-				<td class="py-[10px]">${(sums * item.count.slice(1, item.count.length)).toFixed(
-					1
-				)}</td>
-        `
-						cnt.push(item.id)
-						tbody.appendChild(row)
+				let uniqueIds = []
+				currentData.forEach(el => {
+					if (!uniqueIds.includes(el.id)) uniqueIds.push(el.id)
+				})
+				let all_sua = 0
+				uniqueIds.forEach(productId => {
+					let grouped = currentData.filter(item => item.id == productId)
+					let item = grouped[0]
+					let row = document.createElement('tr')
+					row.className = 'border-b border-gray-200'
+					let colorSelect = document.createElement('select')
+					colorSelect.className =
+						'rounded-full w-[15px] h-[15px] border border-gray-400 mx-2 text-center focus:outline-none active:outline-none'
+					colorSelect.style.appearance = 'none'
+					colorSelect.style.background = 'white'
+					colorSelect.style.padding = '0'
+					colorSelect.style.cursor = 'pointer'
+					let emptyOpt = document.createElement('option')
+					emptyOpt.value = ''
+					emptyOpt.selected = true
+					emptyOpt.disabled = true
+					emptyOpt.style.background = 'transparent'
+					emptyOpt.textContent = ''
+					colorSelect.appendChild(emptyOpt)
+					grouped.forEach(el => {
+						let option = document.createElement('option')
+						option.value = el.color
+						option.textContent = `${el.color} x ${el.sum}`
+						option.style.color = 'white'
+						option.style.background = el.color
+						colorSelect.appendChild(option)
+					})
+					colorSelect.onchange = () => {
+						colorSelect.style.background = colorSelect.value
 					}
+					let pricePerOne = Number(item.count.slice(1))
+					let totalQty = grouped.reduce((acc, el) => acc + Number(el.sum), 0)
+					let sumForThisProduct = totalQty * pricePerOne
+					all_sua += sumForThisProduct
+					row.innerHTML = `
+				<td class="py-[10px] pr-[10px]"><img src="${
+					item.img
+				}" class="w-[60px] h-[40px] rounded"/></td>
+				<td class="py-[10px] pr-[10px]">${item.name}</td>
+				<td class="py-[10px]">${item.count}</td>
+				<td class="py-[10px]">${totalQty}</td>
+				<td class="py-[10px] pr-[10px]">${sumForThisProduct.toFixed(2)}</td>
+			`
+					let tdColor = document.createElement('td')
+					tdColor.className = 'py-[10px] pr-[10px]'
+					tdColor.appendChild(colorSelect)
+					let tds = row.querySelectorAll('td')
+					if (tds.length >= 5) {
+						row.insertBefore(tdColor, tds[4])
+					} else {
+						row.appendChild(tdColor)
+					}
+					tbody.appendChild(row)
 				})
 				document.querySelector(
 					'#All_SUM'
-				).innerHTML = `Result: $${this.#all_sum.toFixed(1)}`
+				).innerHTML = `Result: $${all_sua.toFixed(2)}`
 				dialog.showModal()
 			} else {
 				document.querySelector('#RegisterDialog').showModal()
@@ -295,7 +324,6 @@ export class bag {
 			}
 		}
 	}
-
 	CheckUsers() {
 		setInterval(async () => {
 			this.AdminCreature()
@@ -360,7 +388,6 @@ export class bag {
 					document.querySelector('#Account_mb').style.display = 'none'
 				}
 			}
-
 			let sua = 0
 			let all_sua = 0
 			this.data = JSON.parse(localStorage.getItem('Bag')) || []
@@ -393,7 +420,6 @@ export class bag {
 			this.Colors.appendChild(color)
 		})
 	}
-
 	Show(data) {
 		this.CheckUsers()
 		if (data) {
@@ -404,85 +430,121 @@ export class bag {
 			if (data.length > 4) {
 				box.classList.add('overflow-y-scroll')
 			}
-			data.forEach((el, ind) => {
+			let uniqueIds = []
+			data.forEach(el => {
+				if (!uniqueIds.includes(el.id)) uniqueIds.push(el.id)
+			})
+			if (!this.selectedColors) this.selectedColors = {}
+			uniqueIds.forEach(productId => {
+				let grouped = data.filter(item => item.id == productId)
+				let el = grouped[0]
 				let card = document.createElement('div')
 				let img = document.createElement('img')
 				img.src = `${el.img}`
 				img.style.padding = '4px'
 				img.style.borderRadius = '5px'
-				img.style.border = `4px solid ${el.color}`
 				img.style.height = '94px'
-				let div_1 = document.createElement('div')
 				let name = document.createElement('p')
 				name.innerHTML = el.name
-				let Add_bnt = document.createElement('button')
-				Add_bnt.innerHTML = '⋙'
-				Add_bnt.style.border = '4px solid orange'
-				Add_bnt.style.color = 'orange'
-				Add_bnt.style.borderRadius = '10px'
-				Add_bnt.style.padding = '0px 7px'
-				Add_bnt.style.fontSize = '20px'
-				Add_bnt.onclick = () => {
-					data[ind] = new Create_Products_Cart(
-						el.img,
-						el.name,
-						el.count,
-						el.id,
-						Number(el.sum) + 1,
-						el.color
-					)
+				let colorSelect = document.createElement('select')
+				colorSelect.className = 'rounded-full w-[15px] h-[15px] border border-gray-400 mx-2 text-center focus:outline-none active:outline-none'
+				colorSelect.style.appearance = 'none'
+				colorSelect.style.background = 'white'
+				colorSelect.style.padding = '0'
+				colorSelect.style.cursor = 'pointer'
+				let emptyOpt = document.createElement('option')
+				emptyOpt.value = ''
+				emptyOpt.disabled = true
+				emptyOpt.style.background = 'transparent'
+				emptyOpt.textContent = ''
+				colorSelect.appendChild(emptyOpt)
+				grouped.forEach(item => {
+					let option = document.createElement('option')
+					option.value = item.color
+					option.textContent = `${item.color} x ${item.sum}`
+					option.style.background = item.color
+					option.style.color = 'white'
+					colorSelect.appendChild(option)
+				})
+				let selectedColor = this.selectedColors[productId]
+				if (!selectedColor || !grouped.some(g => g.color == selectedColor)) {
+					selectedColor = grouped[0].color
+				}
+				colorSelect.value = selectedColor
+				colorSelect.style.background = selectedColor
+				colorSelect.onchange = () => {
+					this.selectedColors[productId] = colorSelect.value
+					colorSelect.style.background = colorSelect.value
+				}
+				let nameColorContainer = document.createElement('div')
+				nameColorContainer.style.display = 'flex'
+				nameColorContainer.style.alignItems = 'center'
+				nameColorContainer.appendChild(name)
+				nameColorContainer.appendChild(colorSelect)
+				let Add_btn = document.createElement('button')
+				Add_btn.innerHTML = '⋙'
+				Add_btn.className = 'Add_btn'
+				Add_btn.style.border = '4px solid orange'
+				Add_btn.style.color = 'orange'
+				Add_btn.style.borderRadius = '10px'
+				Add_btn.style.padding = '0px 7px'
+				Add_btn.style.fontSize = '20px'
+				Add_btn.onclick = () => {
+					let found = data.find(e => e.id == productId && e.color == colorSelect.value)
+					if (found) {
+						found.sum = Number(found.sum) + 1
+					}
+					this.selectedColors[productId] = colorSelect.value
 					localStorage.setItem('Bag', JSON.stringify(data))
 					this.Show(data)
 				}
-				let Del_bnt = document.createElement('button')
-				Del_bnt.innerHTML = '⋘'
-				Del_bnt.style.border = '4px solid orange'
-				Del_bnt.style.color = 'orange'
-				Del_bnt.style.borderRadius = '10px'
-				Del_bnt.style.padding = '0px 7px'
-				Del_bnt.style.fontSize = '20px'
-				Del_bnt.onclick = () => {
-					if (Number(el.sum) > 1) {
-						data[ind] = new Create_Products_Cart(
-							el.img,
-							el.name,
-							el.count,
-							el.id,
-							Number(el.sum) - 1,
-							el.color
-						)
-					} else {
-						data = data.filter(elem =>
-							elem.id != el.id ? elem : elem.color != el.color
-						)
+				let Del_btn = document.createElement('button')
+				Del_btn.innerHTML = '⋘'
+				Del_btn.className = 'Del_btn'
+				Del_btn.style.border = '4px solid orange'
+				Del_btn.style.color = 'orange'
+				Del_btn.style.borderRadius = '10px'
+				Del_btn.style.padding = '0px 7px'
+				Del_btn.style.fontSize = '20px'
+				Del_btn.onclick = () => {
+					let found = data.find(e => e.id == productId && e.color == colorSelect.value)
+					if (found && Number(found.sum) > 1) {
+						found.sum = Number(found.sum) - 1
+					} else if (found && Number(found.sum) == 1) {
+						let idx = data.findIndex(e => e.id == productId && e.color == colorSelect.value)
+						if (idx >= 0) data.splice(idx, 1)
 					}
+					this.selectedColors[productId] = colorSelect.value
 					localStorage.setItem('Bag', JSON.stringify(data))
 					this.Show(data)
 				}
 				let close = document.createElement('button')
 				close.innerHTML = 'Ⅹ'
 				close.onclick = () => {
-					data = data.filter(elem =>
-						elem.id != el.id ? elem : elem.color != el.color
-					)
+					let idxs = []
+					data.forEach((item, i) => { if (item.id == productId) idxs.push(i) })
+					for (let i = idxs.length - 1; i >= 0; i--) data.splice(idxs[i], 1)
+					delete this.selectedColors[productId]
 					localStorage.setItem('Bag', JSON.stringify(data))
 					this.Show(data)
 				}
 				let cnt = document.createElement('p')
 				cnt.innerHTML = el.count
 				let sum = document.createElement('p')
-				sum.innerHTML = el.sum
+				let totalSum = grouped.reduce((acc, item) => acc + Number(item.sum), 0)
+				sum.innerHTML = totalSum
 				let name_close = document.createElement('div')
 				let Add_Cnt_Del = document.createElement('div')
-				Add_Cnt_Del.append(Del_bnt, sum, Add_bnt)
+				Add_Cnt_Del.append(Del_btn, sum, Add_btn)
 				Add_Cnt_Del.style.display = 'flex'
 				Add_Cnt_Del.style.gap = '7px'
 				Add_Cnt_Del.style.alignItems = 'center'
 				Add_Cnt_Del.style.marginTop = '10px'
-				name_close.append(name, close)
+				name_close.append(nameColorContainer, close)
 				name_close.style.display = 'flex'
-				div_1.style.width = '100%'
 				name_close.style.justifyContent = 'space-between'
+				let div_1 = document.createElement('div')
+				div_1.style.width = '100%'
 				div_1.append(name_close, cnt, Add_Cnt_Del)
 				card.append(img, div_1)
 				card.style.width = '100%'
@@ -495,14 +557,15 @@ export class bag {
 	}
 }
 let cart = new bag()
-
 let btn = document.querySelector('#AddToCard')
 let sel_col = ''
 function ShowSel() {
 	if (document.querySelector('#Sel_col')) {
 		if (JSON.parse(localStorage.getItem('ID'))) {
 			document.querySelector('#Sel_col').innerHTML = ''
-			document.querySelector('#Sel_col').style.backgroundColor = JSON.parse(localStorage.getItem('ID')).color[0]
+			document.querySelector('#Sel_col').style.backgroundColor = JSON.parse(
+				localStorage.getItem('ID')
+			).color[0]
 			JSON.parse(localStorage.getItem('ID')).color.forEach(el => {
 				let Ccolor = document.createElement('option')
 				Ccolor.value = el
@@ -516,7 +579,6 @@ function ShowSel() {
 		}
 	}
 }
-
 if (document.querySelector('#Sel_col')) {
 	document.querySelector('#Sel_col').onchange = () => {
 		document.querySelector('#Sel_col').style.backgroundColor =
@@ -530,49 +592,29 @@ if (btn) {
 		let name = document.querySelector('#InfoName').textContent.trim()
 		let cnt = document.querySelector('#InfoCnt').textContent.trim()
 		let id = document.querySelector('#InfoID').textContent.trim()
-		let found = cart.data.find(el => {
-			if (
-				`${el.id}` == id &&
-				el.color == document.querySelector('#Sel_col').value
-			) {
-				return true
-			}
-			return false
-		})
+		let color = document.querySelector('#Sel_col').value
+		let found = cart.data.find(el => el.id == id && el.color == color)
 		if (found) {
 			found.sum = Number(found.sum) + 1
 		} else {
-			cart.data.push(
-				new Create_Products_Cart(
-					img,
-					name,
-					cnt,
-					id,
-					1,
-					document.querySelector('#Sel_col').value
-				)
-			)
+			cart.data.push(new Create_Products_Cart(img, name, cnt, id, 1, color))
 		}
 		localStorage.setItem('Bag', JSON.stringify(cart.data))
 		cart.Show(cart.data)
-
 		let Added = document.querySelector('#Added')
 		Added.style.display = 'block'
 		Added.style.opacity = '1'
 		Added.style.bottom = '40px'
 		Added.style.transition = 'opacity 1.5s ease-in-out, bottom 2s ease-in-out'
-
 		setTimeout(() => {
 			Added.style.opacity = '0'
 			Added.style.bottom = '15px'
 		}, 100)
-
 		setTimeout(() => {
 			Added.style.display = 'none'
 		}, 2100)
 	}
 }
-
 export { data_color }
 let new_obj = JSON.parse(localStorage.getItem('ID'))
 if (new_obj) {
