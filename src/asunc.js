@@ -2,8 +2,8 @@ import { ShowProduct } from './main_2.js'
 import { ShowProd } from './naim_1.js'
 let data_ = null
 export class Apis {
-	#api = 'http://localhost:3000/data'
-	#api_2 = 'http://localhost:3000/Users'
+	#api = 'https://68500995e7c42cfd17971442.mockapi.io/data'
+	#api_2 = 'https://68500995e7c42cfd17971442.mockapi.io/Users'
 	constructor() {
 		this.Get()
 	}
