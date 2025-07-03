@@ -36,40 +36,51 @@ export class Apis {
 	async Delete(id) {
 		try {
 			await axios.delete(`${this.#api}/${id}`)
-			this.Get_prod
-		} catch (error) {}
+			await this.Get_prod()
+		} catch (error) {
+			console.error(error)
+		}
 	}
 	async Get_User() {
 		try {
 			const { data: data_2 } = await axios.get(this.#api_2)
 			return data_2
-		} catch (error) {}
+		} catch (error) {
+			console.error(error)
+		}
 	}
 	async Post_User(obj) {
 		try {
 			await axios.post(this.#api_2, obj)
-			this.Get_User()
-		} catch (error) {}
+			await this.Get_User()
+		} catch (error) {
+			console.error(error)
+		}
 	}
 	async Put_User(id, obj) {
 		try {
 			await axios.put(`${this.#api_2}/${id}`, obj)
-			this.Get_User()
-		} catch (error) {}
+			await this.Get_User()
+		} catch (error) {
+			console.error(error)
+		}
 	}
 	async Del_User(id) {
 		try {
 			await axios.delete(`${this.#api_2}/${id}`)
-			this.Get_User()
-		} catch (error) {}
+			await this.Get_User()
+		} catch (error) {
+			console.error(error)
+		}
 	}
 	async Get_prod() {
 		try {
 			const { data: data_3 } = await axios.get(this.#api)
 			return data_3
-		} catch (error) {}
+		} catch (error) {
+			console.error(error)
+		}
 	}
-	
 }
 export { data_ }
 new Apis()
