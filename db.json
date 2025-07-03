@@ -1,0 +1,50 @@
+{
+  "data": [
+    {
+      "name": "Super Hair",
+      "img": "https://media.sketchfab.com/models/d9ff295f5a5045f3a8d1d80be7b776be/thumbnails/4762028f99da4614ae00915cf1cb6486/e8b274e17cc74691b41ac34e132895de.jpeg",
+      "info": "dsfsds",
+      "count": "500",
+      "company": "Caressa",
+      "color": [
+        "#cdff1a",
+        "#ffc21a",
+        "#000000",
+        "#f00000",
+        "#2769be",
+        "#7b0a0a",
+        "#7b4c0a",
+        "#0ac2ff"
+      ],
+      "id": "25e5"
+    },
+    {
+      "name": "Super ",
+      "img": "https://media.sketchfab.com/models/d9ff295f5a5045f3a8d1d80be7b776be/thumbnails/4762028f99da4614ae00915cf1cb6486/e8b274e17cc74691b41ac34e132895de.jpeg",
+      "info": "sfdghjkl;",
+      "count": "500",
+      "company": "Marcos",
+      "color": [
+        "#cdff1a",
+        "#ffc21a"
+      ],
+      "id": "4ddb"
+    }
+  ],
+  "Users": [
+    {
+      "name": "Admin",
+      "password": "123",
+      "img": "",
+      "desc": "",
+      "id": "f06b"
+    },
+    {
+      "id": "6aa4",
+      "name": "fsdf",
+      "password": "zxc",
+      "desc": "",
+      "img": ""
+    }
+  ]
+}
